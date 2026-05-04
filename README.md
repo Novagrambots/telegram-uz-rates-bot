@@ -1,15 +1,14 @@
-# bot_4_rates_uz
+# Telegram UZ Rates Bot
 
 Telegram-бот для отслеживания курсов валют Узбекистана.
 
 **Возможности:**
 - Курсы ЦБ Узбекистана (CBU) в реальном времени
-- Курсы в коммерческих банках (покупка/продажа)
+- Курсы в коммерческих банках (покупка/продажа) с bank.uz
 - Конвертер валют
-- Графики динамики курсов (matplotlib)
-- Курсы криптовалют (CoinGecko)
-- Алерты: уведомление когда курс достигает порога
+- Курсы криптовалют (CoinGecko, пересчёт в UZS через ЦБ)
 - Ежедневный дайджест в выбранное время
+- Inline-режим: `@bot 100 USD EUR`
 - Три языка: русский, узбекский, английский
 
 ## Стек
@@ -17,13 +16,11 @@ Telegram-бот для отслеживания курсов валют Узбе
 - Python 3.12 + aiogram 3.26
 - PostgreSQL 16 + SQLAlchemy 2 + Alembic
 - httpx (API запросы)
-- matplotlib (графики)
-- Local Bot API (порт 8084)
+- Docker Compose
 
 ## Быстрый старт
 
 ```bash
-cd /home/ulugbek/telegram_bots/tg_bots/bot_4_rates_uz
 cp .env.example .env
 # Заполнить BOT_TOKEN, DB_PASSWORD, ADMIN_IDS в .env
 docker compose up -d --build
@@ -39,8 +36,8 @@ bot/               — исходный код
   middlewares/     — подписка, rate limit
   keyboards/       — inline-клавиатуры
 alembic/           — миграции БД
-docker-compose.yml — сервисы: bot, bot-api, postgres, autoheal
-Dockerfile         — образ бота (python:3.12-slim + matplotlib deps)
+docker-compose.yml — сервисы: bot, postgres, autoheal
+Dockerfile         — образ бота (python:3.12-slim)
 ```
 
 ## Команды бота
@@ -50,13 +47,14 @@ Dockerfile         — образ бота (python:3.12-slim + matplotlib deps)
 | /start | Главное меню |
 | /rates | Курсы ЦБ |
 | /banks | Курсы в банках |
-| /usd, /eur, /rub | Быстрый курс |
-| /convert | Конвертер |
-| /chart | График курса |
+| /usd, /eur, /rub | Быстрый курс одной валюты |
+| /convert | Конвертер валют |
 | /crypto | Криптовалюты |
-| /alerts | Алерты на курс |
-| /subscribe | Дайджест ежедневно |
+| /subscribe | Подписаться на дайджест |
+| /unsubscribe | Отписаться |
 | /history | История конвертаций |
+| /profile | Мой профиль |
+| /language | Сменить язык |
 
 ## Переменные окружения
 
@@ -68,5 +66,7 @@ DB_PASSWORD=       — пароль PostgreSQL
 ADMIN_IDS=         — ID администраторов (через запятую)
 TIMEZONE=Asia/Tashkent
 CBU_REFRESH_MIN=60
+BANKS_REFRESH_MIN=30
 CRYPTO_REFRESH_MIN=5
+DAILY_DIGEST_TIME=09:00
 ```
